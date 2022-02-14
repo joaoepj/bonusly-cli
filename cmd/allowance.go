@@ -24,24 +24,29 @@ This application is a tool to generate the needed files
 to quickly create a Cobra application.`,
 	Run: func(cmd *cobra.Command, args []string) {
 		userData := utils.ReadUserDataFromDisk()
-		if userData.Timestamp.Add(24*time.Hour).Before(time.Now()) || force == true {
+		isDataOlderThanOneDay := userData.Timestamp.Add(24 * time.Hour).Before(time.Now())
+		if isDataOlderThanOneDay || force == true {
 			// fetch new data from server
 			fmt.Println("getting new data from server")
 			fmt.Printf("force flag set?: %t\n", force)
-			fmt.Printf("timestamp exceedeed?: %t\n", userData.Timestamp.Add(24*time.Hour).Before(time.Now()))
-			rawUserData, err := utils.GetUser("me")
+			fmt.Printf("timestamp exceedeed?: %t\n", isDataOlderThanOneDay)
+			user, err := utils.GetUser("me")
 			if err != nil {
-				fmt.Printf("error")
+				fmt.Println("error")
 			}
-			userData.Data = rawUserData
+			data, err := json.Marshal(user)
+			if err != nil {
+				fmt.Println("error when marshaling x2345")
+			}
+			userData.Data = data
 			userData.Timestamp = time.Now()
 		}
 		user := utils.User{}
 		if err := json.Unmarshal(userData.Data, &user); err != nil {
 			panic(err)
 		}
-		fmt.Printf("You still have %d Bonusly left to give away this month.\n", user.Result.GivingBalance)
-		fmt.Printf("You still have %d Bonusly left to spend on rewards this month.\n", user.Result.EarningBalance)
+		fmt.Printf("You still have %d Bonusly left to give away this month.\n", user.GivingBalance)
+		fmt.Printf("You still have %d Bonusly left to spend on rewards this month.\n", user.EarningBalance)
 		utils.SaveUserDataToDisk(userData)
 	},
 }

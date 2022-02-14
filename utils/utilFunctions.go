@@ -6,24 +6,30 @@ import (
 	"io"
 	"net/http"
 	"os"
+	// "reflect"
 	"time"
 
 	"gopkg.in/yaml.v3"
 )
 
+type userApiResponse struct {
+	Success bool   `json:"success"`
+	Result  User   `json:"result"`
+	Message []byte `json:"message"`
+}
+
 type UserData struct {
 	Timestamp time.Time `json:"timestamp"`
 	Data      []byte    `json:"data"`
 }
-type Config struct {
+type config struct {
 	ApiToken string `yaml:"apiToken"`
 }
 
 type User struct {
-	Result struct {
-		GivingBalance  int `json:"giving_balance"`
-		EarningBalance int `json:"earning_balance"`
-	} `json:"result"`
+	GivingBalance  int    `json:"giving_balance"`
+	EarningBalance int    `json:"earning_balance"`
+	Email          string `json:"email"`
 }
 
 func fetchCurrentGivingBalance() int {
@@ -45,8 +51,19 @@ func makeRequest(method, url string, payload []byte) ([]byte, error) {
 	return io.ReadAll(resp.Body)
 }
 
-func GetUser(id string) ([]byte, error) {
-	return makeRequest("GET", "https://bonus.ly/api/v1/users/me", []byte(""))
+func GetUser(id string) (User, error) {
+	userData, err := makeRequest("GET", "https://bonus.ly/api/v1/users/me", []byte(""))
+	if err != nil {
+		fmt.Printf("something went wrong during get request")
+		return User{}, err
+	}
+	userApiResponse := userApiResponse{}
+	if err := json.Unmarshal(userData, &userApiResponse); err != nil {
+		fmt.Printf("Error unmarshaling user data")
+		return User{}, err
+	}
+
+	return userApiResponse.Result, nil
 }
 
 func readApiToken() string {
@@ -55,7 +72,7 @@ func readApiToken() string {
 		panic(err)
 	}
 
-	config := Config{}
+	config := config{}
 
 	if err := yaml.Unmarshal([]byte(dat), &config); err != nil {
 		panic(err)
@@ -84,7 +101,7 @@ func ReadUserDataFromDisk() UserData {
 	return userData
 }
 
-type CreateBonusPayload struct {
+type Bonus struct {
 	GiverEmail    string `json:"giver_email"`
 	ReceiverEmail string `json:"receiver_email"`
 	Amount        int    `json:"amount"`
@@ -92,7 +109,7 @@ type CreateBonusPayload struct {
 	Reason        string `json:"reason"`
 }
 
-func CreateBonus(payload CreateBonusPayload) ([]byte, error) {
+func CreateBonus(payload Bonus) ([]byte, error) {
 	data, err := json.Marshal(payload)
 	if err != nil {
 		fmt.Printf("Error occurred")
