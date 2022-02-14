@@ -29,11 +29,9 @@ to quickly create a Cobra application.`,
 			fmt.Println("getting new data from server")
 			fmt.Printf("force flag set?: %t\n", force)
 			fmt.Printf("timestamp exceedeed?: %t\n", userData.Timestamp.Add(24*time.Hour).Before(time.Now()))
-			apiToken := utils.ReadApiToken()
-			rawUserData, userDataErr := utils.GetUser("me", apiToken)
-
-			if userDataErr != nil {
-				panic(userDataErr)
+			rawUserData, err := utils.GetUser("me")
+			if err != nil {
+				fmt.Printf("error")
 			}
 			userData.Data = rawUserData
 			userData.Timestamp = time.Now()

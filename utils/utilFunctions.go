@@ -2,6 +2,7 @@ package utils
 
 import (
 	"encoding/json"
+	"fmt"
 	"io"
 	"net/http"
 	"os"
@@ -29,11 +30,11 @@ func fetchCurrentGivingBalance() int {
 	return 5
 }
 
-func GetUser(id, apiToken string) ([]byte, error) {
+func makeRequest(method, url string, payload []byte) ([]byte, error) {
 	client := &http.Client{}
 
-	req, err := http.NewRequest("GET", "https://bonus.ly/api/v1/users/me", nil)
-	req.Header.Add("Authorization", "Bearer "+apiToken)
+	req, err := http.NewRequest(method, url, nil)
+	req.Header.Add("Authorization", "Bearer "+readApiToken())
 	req.Header.Add("HTTP_APPLICATION_NAME", "bonuslyCLI")
 
 	resp, err := client.Do(req)
@@ -44,7 +45,11 @@ func GetUser(id, apiToken string) ([]byte, error) {
 	return io.ReadAll(resp.Body)
 }
 
-func ReadApiToken() string {
+func GetUser(id string) ([]byte, error) {
+	return makeRequest("GET", "https://bonus.ly/api/v1/users/me", []byte(""))
+}
+
+func readApiToken() string {
 	dat, err := os.ReadFile("config.yml")
 	if err != nil {
 		panic(err)
@@ -77,4 +82,20 @@ func ReadUserDataFromDisk() UserData {
 		panic(err)
 	}
 	return userData
+}
+
+type CreateBonusPayload struct {
+	GiverEmail    string `json:"giver_email"`
+	ReceiverEmail string `json:"receiver_email"`
+	Amount        int    `json:"amount"`
+	Hashtag       string `json:"hashtag"`
+	Reason        string `json:"reason"`
+}
+
+func CreateBonus(payload CreateBonusPayload) ([]byte, error) {
+	data, err := json.Marshal(payload)
+	if err != nil {
+		fmt.Printf("Error occurred")
+	}
+	return makeRequest("POST", "https://bonus.ly/api/v1/bonuses", data)
 }
