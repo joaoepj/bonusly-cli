@@ -27,7 +27,7 @@ to quickly create a Cobra application.`,
 	Run: func(cmd *cobra.Command, args []string) {
 		total := len(recipients) * amount
 
-		if validateFlags(amount, tags, recipients, message) != false {
+		if validateFlags(amount, tags, recipients, message) == false {
 			return
 		}
 		// TODO: check if balance is enough
