@@ -14,9 +14,19 @@ import (
 	"gopkg.in/yaml.v3"
 )
 
+const BASE_URL = "https://bonus.ly/api/v1/"
+
 type userApiResponse struct {
 	Success bool   `json:"success"`
 	Result  User   `json:"result"`
+	Message []byte `json:"message"`
+}
+
+type bonusApiResponse struct {
+	Success bool `json:"success"`
+	Result  struct {
+		Id string `json:"id"`
+	} `json:"result"`
 	Message []byte `json:"message"`
 }
 
@@ -81,7 +91,7 @@ func GetLocalUser() (User, error) {
 }
 
 func GetUser(id string) (User, error) {
-	userData, err := makeRequest(http.MethodGet, "https://bonus.ly/api/v1/users/me", []byte(""))
+	userData, err := makeRequest(http.MethodGet, BASE_URL+"/users/me", []byte(""))
 	if err != nil {
 		fmt.Printf("something went wrong during get request")
 		return User{}, err
@@ -135,10 +145,16 @@ type Bonus struct {
 	Reason string `json:"reason"`
 }
 
-func CreateBonus(payload Bonus) ([]byte, error) {
+// returns ID of post if created successfully
+func CreateBonus(payload Bonus) (string, error) {
 	data, err := json.Marshal(payload)
 	if err != nil {
-		fmt.Printf("Error occurred")
+		return "", err
 	}
-	return makeRequest(http.MethodPost, "https://bonus.ly/api/v1/bonuses", data)
+	bonusData, err := makeRequest(http.MethodPost, BASE_URL+"/bonuses", data)
+	bonus := bonusApiResponse{}
+	if err := json.Unmarshal(bonusData, &bonus); err != nil {
+		return "", err
+	}
+	return bonus.Result.Id, nil
 }

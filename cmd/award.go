@@ -38,12 +38,12 @@ to quickly create a Cobra application.`,
 		if len(recipients) < 1 {
 			fmt.Printf("That is a total of %d.\n", total)
 		}
-		response, err := executeTransaction(amount, tags, recipients, message)
+		bonusId, err := executeTransaction(amount, tags, recipients, message)
 		if err != nil {
 			fmt.Println("something went wrong during bonus awarding")
 			fmt.Println(err)
 		}
-		fmt.Println(string(response))
+		fmt.Printf("Created bonus successfully! Check it out at bonus.ly/bonuses/%s", bonusId)
 	},
 }
 
@@ -68,7 +68,7 @@ func validateFlags(amount int, tags, recipients []string, message string) bool {
 	return true
 }
 
-func executeTransaction(amount int, tags, recipients []string, message string) ([]byte, error) {
+func executeTransaction(amount int, tags, recipients []string, message string) (string, error) {
 	for i := 0; i < len(recipients); i++ {
 		recipients[i] = "@" + strings.TrimSpace(recipients[i])
 	}
