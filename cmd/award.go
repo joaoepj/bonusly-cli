@@ -72,10 +72,12 @@ func executeTransaction(amount int, tags, recipients []string, message string) (
 	for i := 0; i < len(recipients); i++ {
 		recipients[i] = "@" + strings.TrimSpace(recipients[i])
 	}
+	for i := 0; i < len(tags); i++ {
+		tags[i] = "#" + strings.TrimSpace(tags[i])
+	}
 	payload := utils.Bonus{
 		Amount: amount,
-		Reason: strings.Join(recipients, " ") + " " + message + " #" + tags[0],
+		Reason: strings.Join(recipients, " ") + " " + message + " " + strings.Join(tags, " "),
 	}
-	fmt.Printf("payload: %v\n", payload)
 	return utils.CreateBonus(payload)
 }
