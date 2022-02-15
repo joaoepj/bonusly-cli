@@ -1,12 +1,14 @@
 package utils
 
 import (
+	"bytes"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io"
 	"net/http"
 	"os"
-	// "reflect"
+
 	"time"
 
 	"gopkg.in/yaml.v3"
@@ -39,20 +41,47 @@ func fetchCurrentGivingBalance() int {
 func makeRequest(method, url string, payload []byte) ([]byte, error) {
 	client := &http.Client{}
 
-	req, err := http.NewRequest(method, url, nil)
+	var req *http.Request
+	var err error
+	if method == http.MethodGet {
+		req, err = http.NewRequest(http.MethodGet, url, nil)
+		if err != nil {
+			fmt.Printf("error occured")
+		}
+	} else if method == http.MethodPost {
+		payloadBody := bytes.NewBuffer(payload)
+		req, err = http.NewRequest(http.MethodPost, url, payloadBody)
+		if err != nil {
+			return nil, err
+		}
+		req.Header.Add("Content-Type", "application/json")
+	} else {
+		fmt.Printf("Unknown method %s", method)
+		return nil, errors.New("unknown method")
+	}
 	req.Header.Add("Authorization", "Bearer "+readApiToken())
 	req.Header.Add("HTTP_APPLICATION_NAME", "bonuslyCLI")
 
 	resp, err := client.Do(req)
 	if err != nil {
-		// handle error
+		return nil, err
 	}
 	defer resp.Body.Close()
 	return io.ReadAll(resp.Body)
 }
 
+func GetLocalUser() (User, error) {
+	userData := ReadUserDataFromDisk()
+	// TODO: handle not existing user data
+	user := User{}
+	if err := json.Unmarshal(userData.Data, &user); err != nil {
+		return User{}, err
+	}
+	return user, nil
+}
+
 func GetUser(id string) (User, error) {
-	userData, err := makeRequest("GET", "https://bonus.ly/api/v1/users/me", []byte(""))
+	userData, err := makeRequest(http.MethodGet, "https://bonus.ly/api/v1/users/me", []byte(""))
 	if err != nil {
 		fmt.Printf("something went wrong during get request")
 		return User{}, err
@@ -102,11 +131,8 @@ func ReadUserDataFromDisk() UserData {
 }
 
 type Bonus struct {
-	GiverEmail    string   `json:"giver_email"`
-	ReceiverEmail string   `json:"receiver_email"`
-	Amount        int      `json:"amount"`
-	Hashtag       []string `json:"hashtag"`
-	Reason        string   `json:"reason"`
+	Amount int    `json:"amount"`
+	Reason string `json:"reason"`
 }
 
 func CreateBonus(payload Bonus) ([]byte, error) {
@@ -114,5 +140,5 @@ func CreateBonus(payload Bonus) ([]byte, error) {
 	if err != nil {
 		fmt.Printf("Error occurred")
 	}
-	return makeRequest("POST", "https://bonus.ly/api/v1/bonuses", data)
+	return makeRequest(http.MethodPost, "https://bonus.ly/api/v1/bonuses", data)
 }

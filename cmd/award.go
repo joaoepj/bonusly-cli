@@ -3,6 +3,7 @@ package cmd
 import (
 	"bonusly/utils"
 	"fmt"
+	"strings"
 
 	"github.com/spf13/cobra"
 )
@@ -37,7 +38,12 @@ to quickly create a Cobra application.`,
 		if len(recipients) < 1 {
 			fmt.Printf("That is a total of %d.\n", total)
 		}
-		executeTransaction(amount, tags, recipients, message)
+		response, err := executeTransaction(amount, tags, recipients, message)
+		if err != nil {
+			fmt.Println("something went wrong during bonus awarding")
+			fmt.Println(err)
+		}
+		fmt.Println(string(response))
 	},
 }
 
@@ -63,16 +69,13 @@ func validateFlags(amount int, tags, recipients []string, message string) bool {
 }
 
 func executeTransaction(amount int, tags, recipients []string, message string) ([]byte, error) {
-	user, err := utils.GetUser("me")
-	if err != nil {
-		fmt.Printf("error occured")
+	for i := 0; i < len(recipients); i++ {
+		recipients[i] = "@" + strings.TrimSpace(recipients[i])
 	}
 	payload := utils.Bonus{
-		GiverEmail:    user.Email,
-		ReceiverEmail: recipients[0],
-		Amount:        amount,
-		Hashtag:       tags,
-		Reason:        message,
+		Amount: amount,
+		Reason: strings.Join(recipients, " ") + " " + message + " #" + tags[0],
 	}
+	fmt.Printf("payload: %v\n", payload)
 	return utils.CreateBonus(payload)
 }
