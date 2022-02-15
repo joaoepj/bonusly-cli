@@ -102,11 +102,11 @@ func ReadUserDataFromDisk() UserData {
 }
 
 type Bonus struct {
-	GiverEmail    string `json:"giver_email"`
-	ReceiverEmail string `json:"receiver_email"`
-	Amount        int    `json:"amount"`
-	Hashtag       string `json:"hashtag"`
-	Reason        string `json:"reason"`
+	GiverEmail    string   `json:"giver_email"`
+	ReceiverEmail string   `json:"receiver_email"`
+	Amount        int      `json:"amount"`
+	Hashtag       []string `json:"hashtag"`
+	Reason        string   `json:"reason"`
 }
 
 func CreateBonus(payload Bonus) ([]byte, error) {
