@@ -14,7 +14,7 @@ import (
 	"gopkg.in/yaml.v3"
 )
 
-const BASE_URL = "https://bonus.ly/api/v1/"
+const BASE_URL = "https://bonus.ly/api/v1"
 
 type userApiResponse struct {
 	Success bool   `json:"success"`
@@ -44,8 +44,13 @@ type User struct {
 	Email          string `json:"email"`
 }
 
-func fetchCurrentGivingBalance() int {
-	return 5
+func FetchCurrentGivingBalance() int {
+	user, err := GetUser("me")
+	if err != nil {
+		fmt.Println(err)
+		return -1
+	}
+	return user.GivingBalance
 }
 
 func makeRequest(method, url string, payload []byte) ([]byte, error) {
@@ -82,7 +87,7 @@ func makeRequest(method, url string, payload []byte) ([]byte, error) {
 
 func GetLocalUser() (User, error) {
 	userData := ReadUserDataFromDisk()
-	// TODO: handle not existing user data
+	// TODO: handle non-existant user data
 	user := User{}
 	if err := json.Unmarshal(userData.Data, &user); err != nil {
 		return User{}, err
