@@ -18,3 +18,4 @@ jobs:
 
     - name: Build
       run: go build main.go
+      run: ls
