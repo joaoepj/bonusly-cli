@@ -46,7 +46,6 @@ var mode string
 
 func init() {
 	rootCmd.AddCommand(makeitrainCmd)
-	makeitrainCmd.Flags().StringVarP(&message, "message", "m", "You're awesome!", "Your thank you/appreciation message that will be visible to everone.")
 	makeitrainCmd.Flags().StringSliceVarP(&tags, "hashtags", "g", nil, "Specify optional hashtags that go along with your message.")
 	makeitrainCmd.Flags().StringSliceVarP(&recipients, "recipients", "r", nil, "Specify one or more recipients for the bonus.")
 	makeitrainCmd.Flags().StringVarP(&mode, "mode", "m", "complete", "Choose the algorithm that will be used to distribute the remaining bonuslys")
