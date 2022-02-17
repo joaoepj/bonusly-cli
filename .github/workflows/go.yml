@@ -22,6 +22,8 @@ jobs:
     - name: GH Release
       uses: softprops/action-gh-release@v0.1.14
       with:
+        prerelease: true
+        name: Bonusly CLI
         files: bonusly_win64.exe
 
 
