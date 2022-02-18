@@ -71,7 +71,11 @@ func makeRequest(method, url string, payload []byte) ([]byte, error) {
 		fmt.Printf("Unknown method %s", method)
 		return nil, errors.New("unknown method")
 	}
-	req.Header.Add("Authorization", "Bearer "+readApiToken())
+	apiToken, err := readApiToken()
+	if err != nil {
+		return nil, err
+	}
+	req.Header.Add("Authorization", "Bearer "+apiToken)
 	req.Header.Add("HTTP_APPLICATION_NAME", "bonuslyCLI")
 
 	resp, err := client.Do(req)
@@ -110,20 +114,20 @@ func GetUser(id string) (User, error) {
 	return userApiResponse.Result, nil
 }
 
-func readApiToken() string {
+func readApiToken() (string, error) {
 	dat, err := os.ReadFile(USER_DATA_FILE)
 	if err != nil {
 		fmt.Println("Error reading user data file.")
-		return ""
+		return "", err
 	}
 
 	userData := UserData{}
 
 	if err := json.Unmarshal([]byte(dat), &userData); err != nil {
 		fmt.Println("Error unmarshaling user data.")
-		return ""
+		return "", err
 	}
-	return userData.ApiToken
+	return userData.ApiToken, nil
 }
 
 func SaveUserDataToDisk(userData UserData) error {
@@ -139,9 +143,6 @@ func SaveUserDataToDisk(userData UserData) error {
 func ReadUserDataFromDisk(verbose bool) (UserData, error) {
 	dat, err := os.ReadFile(USER_DATA_FILE)
 	if err != nil {
-		if verbose {
-			fmt.Println("No userdata file exists. Returning empty user.")
-		}
 		return UserData{}, err
 	}
 	userData := UserData{}
@@ -168,4 +169,13 @@ func CreateBonus(payload Bonus) (string, error) {
 		return "", err
 	}
 	return bonus.Result.Id, nil
+}
+
+func CheckApiTokenExists() bool {
+	_, err := readApiToken()
+	if err != nil {
+		fmt.Println("can't find API token. Did you forget to call `bonusly config --token`?")
+		return false
+	}
+	return true
 }

@@ -17,21 +17,25 @@ var apiToken string
 var configCmd = &cobra.Command{
 	Use:   "config",
 	Short: "Use this command to edit the user config",
-	Long: `A longer description that spans multiple lines and likely contains examples
-and usage of using your command. For example:
+	Long: `With this command you can configure your settings. Start off by running
+"bonusly config --token <your-api-token>" to be able to use the Bonusly CLI.
 
-Cobra is a CLI library for Go that empowers applications.
-This application is a tool to generate the needed files
-to quickly create a Cobra application.`,
+ If you don't have a Bonusly API token yet, go visit https://bonus.ly/api to create one.`,
+
 	Run: func(cmd *cobra.Command, args []string) {
+		if len(args) == 0 {
+			fmt.Println("Please specify at least one flag! See \"bonusly config --help\" for more information.")
+			return
+		}
 		if len(apiToken) == 0 {
 			fmt.Println("Api token can't be empty!")
 			return
 		}
 		userData, err := utils.ReadUserDataFromDisk(verbose)
 		if err != nil {
-			fmt.Println(err)
-			return
+			if verbose {
+				fmt.Println(err)
+			}
 		}
 		userData.ApiToken = apiToken
 		utils.SaveUserDataToDisk(userData)
