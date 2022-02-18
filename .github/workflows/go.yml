@@ -2,8 +2,6 @@ name: Go
 
 on: push
 
-
-
 jobs:
 
   build:
@@ -17,14 +15,19 @@ jobs:
       with:
         go-version: 1.17
 
-    - name: Build
-      run: env GOOS=windows GOARCH=amd64 go build -o bonusly_win64.exe -ldflags="-w -s" main.go
+    - name: Build Windows Package
+      run: env GOOS=windows GOARCH=amd64 go build -o bonusly -ldflags="-w -s" main.go && zip bonusly_win64.zip bonusly
+    - name: Build MacOS Package
+      run: env GOOS=darwin GOARCH=arm64 go build -o bonusly -ldflags="-w -s" main.go && tar -zcvf bonusly_macos_arm64.tar.gz bonusly
+    - name: Build Ubuntu Package
+      run: env GOOS=linux GOARCH=amd64 go build -o bonusly -ldflags="-w -s" main.go && tar -zvcf bonusly_linux_amd64.tar.gz bonusly
     - name: GH Release
       uses: softprops/action-gh-release@v0.1.14
       if: startsWith(github.ref, 'refs/tags/')
       with:
-        prerelease: true
         name: Bonusly CLI
-        files: bonusly_win64.exe
-
+        files: |
+          bonusly_win64.zip
+          bonusly_macos_arm64.tar.gz
+          bonusly_linux_amd64.tar.gz
 
