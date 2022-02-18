@@ -10,8 +10,6 @@ import (
 	"os"
 
 	"time"
-
-	"gopkg.in/yaml.v3"
 )
 
 const BASE_URL = "https://bonus.ly/api/v1"
@@ -34,9 +32,7 @@ type bonusApiResponse struct {
 type UserData struct {
 	Timestamp time.Time `json:"timestamp"`
 	Data      []byte    `json:"data"`
-}
-type config struct {
-	ApiToken string `yaml:"apiToken"`
+	ApiToken  string    `json:"apiToken"`
 }
 
 type User struct {
@@ -87,7 +83,10 @@ func makeRequest(method, url string, payload []byte) ([]byte, error) {
 }
 
 func GetLocalUser(verbose bool) (User, error) {
-	userData := ReadUserDataFromDisk(verbose)
+	userData, err := ReadUserDataFromDisk(verbose)
+	if err != nil {
+		return User{}, err
+	}
 	// TODO: handle non-existant user data
 	user := User{}
 	if err := json.Unmarshal(userData.Data, &user); err != nil {
@@ -112,41 +111,44 @@ func GetUser(id string) (User, error) {
 }
 
 func readApiToken() string {
-	dat, err := os.ReadFile("config.yml")
+	dat, err := os.ReadFile(USER_DATA_FILE)
 	if err != nil {
-		panic(err)
+		fmt.Println("Error reading user data file.")
+		return ""
 	}
 
-	config := config{}
+	userData := UserData{}
 
-	if err := yaml.Unmarshal([]byte(dat), &config); err != nil {
-		panic(err)
+	if err := json.Unmarshal([]byte(dat), &userData); err != nil {
+		fmt.Println("Error unmarshaling user data.")
+		return ""
 	}
-	return config.ApiToken
+	return userData.ApiToken
 }
 
-func SaveUserDataToDisk(userData UserData) {
+func SaveUserDataToDisk(userData UserData) error {
 	data, err := json.Marshal(userData)
 	if err != nil {
-		panic(err)
+		return errors.New("Error marshaling user data to byte string.")
 	}
 	if err := os.WriteFile(USER_DATA_FILE, data, 0666); err != nil {
-		panic(err)
+		return errors.New("Error writing new data to disk")
 	}
+	return nil
 }
-func ReadUserDataFromDisk(verbose bool) UserData {
+func ReadUserDataFromDisk(verbose bool) (UserData, error) {
 	dat, err := os.ReadFile(USER_DATA_FILE)
 	if err != nil {
 		if verbose {
 			fmt.Println("No userdata file exists. Returning empty user.")
 		}
-		return UserData{}
+		return UserData{}, err
 	}
 	userData := UserData{}
 	if err := json.Unmarshal(dat, &userData); err != nil {
-		panic(err)
+		return UserData{}, err
 	}
-	return userData
+	return userData, nil
 }
 
 type Bonus struct {
