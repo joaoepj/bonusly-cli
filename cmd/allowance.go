@@ -11,6 +11,7 @@ import (
 )
 
 var force bool
+var verbose bool
 
 // allowanceCmd represents the allowance command
 var allowanceCmd = &cobra.Command{
@@ -23,13 +24,15 @@ Cobra is a CLI library for Go that empowers applications.
 This application is a tool to generate the needed files
 to quickly create a Cobra application.`,
 	Run: func(cmd *cobra.Command, args []string) {
-		userData := utils.ReadUserDataFromDisk()
+		userData := utils.ReadUserDataFromDisk(verbose)
 		isDataOlderThanOneDay := userData.Timestamp.Add(24 * time.Hour).Before(time.Now())
 		if isDataOlderThanOneDay || force == true {
 			// fetch new data from server
-			fmt.Println("getting new data from server")
-			fmt.Printf("force flag set?: %t\n", force)
-			fmt.Printf("timestamp exceedeed?: %t\n", isDataOlderThanOneDay)
+			if verbose {
+				fmt.Println("getting new data from server")
+				fmt.Printf("force flag set?: %t\n", force)
+				fmt.Printf("timestamp exceedeed?: %t\n", isDataOlderThanOneDay)
+			}
 			user, err := utils.GetUser("me")
 			if err != nil {
 				fmt.Println("error")
@@ -55,4 +58,5 @@ func init() {
 	rootCmd.AddCommand(allowanceCmd)
 
 	allowanceCmd.Flags().BoolVarP(&force, "force", "f", false, "Force bonuslyCLI to fetch new data from the server")
+	allowanceCmd.Flags().BoolVarP(&verbose, "verbose", "v", false, "Additional debugging output")
 }

@@ -15,6 +15,7 @@ import (
 )
 
 const BASE_URL = "https://bonus.ly/api/v1"
+const USER_DATA_FILE = ".userdata"
 
 type userApiResponse struct {
 	Success bool   `json:"success"`
@@ -85,8 +86,8 @@ func makeRequest(method, url string, payload []byte) ([]byte, error) {
 	return io.ReadAll(resp.Body)
 }
 
-func GetLocalUser() (User, error) {
-	userData := ReadUserDataFromDisk()
+func GetLocalUser(verbose bool) (User, error) {
+	userData := ReadUserDataFromDisk(verbose)
 	// TODO: handle non-existant user data
 	user := User{}
 	if err := json.Unmarshal(userData.Data, &user); err != nil {
@@ -129,14 +130,17 @@ func SaveUserDataToDisk(userData UserData) {
 	if err != nil {
 		panic(err)
 	}
-	if err := os.WriteFile("userData.txt", data, 0666); err != nil {
+	if err := os.WriteFile(USER_DATA_FILE, data, 0666); err != nil {
 		panic(err)
 	}
 }
-func ReadUserDataFromDisk() UserData {
-	dat, err := os.ReadFile("userData.txt")
+func ReadUserDataFromDisk(verbose bool) UserData {
+	dat, err := os.ReadFile(USER_DATA_FILE)
 	if err != nil {
-		panic(err)
+		if verbose {
+			fmt.Println("No userdata file exists. Returning empty user.")
+		}
+		return UserData{}
 	}
 	userData := UserData{}
 	if err := json.Unmarshal(dat, &userData); err != nil {

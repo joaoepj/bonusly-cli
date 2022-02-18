@@ -1,7 +1,8 @@
 Session.vim
 
 /main
-/userData.txt
 /config.yml
 /build/
+.userdata
+.config
 
