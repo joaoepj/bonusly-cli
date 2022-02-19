@@ -28,3 +28,9 @@ Then run `bonusly config --set-token <your API token>`. If no errors are returne
 > You still have 179 Bonusly left to give away this month.
 > You still have 956 Bonusly left to spend on rewards this month. 
 ```
+2. Send Bonuslys to someone
+```bash
+> bonusly award -m "Here are some bonusly for you! #team" -r "john.doe" -g "awesome, cliIsCool" -a 20
+> ...
+> Created bonus successfully! Check it out at bonus.ly/bonuses/<bonusPostId>
+```
