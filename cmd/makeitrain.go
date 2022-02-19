@@ -33,15 +33,28 @@ var makeitrainCmd = &cobra.Command{
 			remainingBalance := balance - amountPerPerson*count
 			if verbose {
 				fmt.Printf("%d bonuslys remaining\n", remainingBalance)
-				fmt.Println("can't split evenly. Continuing with specified mode.")
+				fmt.Println("Can't split evenly. Continuing with specified mode.")
 			}
 		}
+		outputMessage := "send %d (%d per person) bonusly to %v with message \"%s\"."
 		if dryRun {
-			fmt.Printf("Would send %d (%d per person) bonusly to %v with message \"%s\".\n",
-				amountPerPerson*count, amountPerPerson, recipients, message)
+			fmt.Printf("Would "+outputMessage+"\n", amountPerPerson*count, amountPerPerson, recipients, message)
 			return
 		}
-
+		if !force {
+			fmt.Printf("Will "+outputMessage+" Are you sure? (y/n): ", amountPerPerson*count, amountPerPerson, recipients, message)
+			input := ""
+			for input != "y" {
+				fmt.Scanf("%s", &input)
+				if input == "n" {
+					fmt.Println("Operation aborted. No bonuslys were transferred.")
+					return
+				} else if input != "y" {
+					fmt.Println("Please enter a valid value. Accepted answers are 'y' or 'n'.")
+				}
+			}
+		}
+		executeTransaction(amountPerPerson, tags, recipients, message)
 	},
 }
 
