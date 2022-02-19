@@ -36,7 +36,7 @@ Then run `bonusly config --set-token <your API token>`. If no errors are returne
 > ...
 > Created bonus successfully! Check it out at bonus.ly/bonuses/<bonusPostId>
 ```
-## How To Spend All Your Remaining Bonuslys At The End Of Each month
+## How To Spend All Your Remaining Bonuslys At The End Of Each Month
 
 This can be achieved by defining three (yes, three) cronjobs (if you are on a Unix-based system).
 They will look like this:
@@ -48,3 +48,8 @@ They will look like this:
 What this will do is run `makeitrain` on the 30th of April, June, September, and November; on the 31st of January, March, May, July, August, October, and December; and on the 28th of February.
 
 We have to define three seperate cronjobs since crontabs don't support an easy way to specify the last day of the month.
+
+### Running On Windows Shutdown
+
+If you don't have a server on which you can run the script, but only have a Windows workmachine, you can set up a script to trigger whenever the PC shuts down.
+Personally I haven't tested this yet, but [here](https://superuser.com/a/165176) is some information regarding this.
