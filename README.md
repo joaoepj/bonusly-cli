@@ -1,3 +1,5 @@
+:warning: This repo is WIP. Use it at your own risk! :warning:
+
 # Bonusly CLI
 
 This program enables interacting with the [Bonusly API](https://help.bonus.ly/en/articles/1258685-getting-started-with-the-bonusly-api) from the command line.
