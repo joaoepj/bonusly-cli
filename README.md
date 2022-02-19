@@ -36,3 +36,15 @@ Then run `bonusly config --set-token <your API token>`. If no errors are returne
 > ...
 > Created bonus successfully! Check it out at bonus.ly/bonuses/<bonusPostId>
 ```
+## How To Spend All Your Remaining Bonuslys At The End Of Each month
+
+This can be achieved by defining three (yes, three) cronjobs (if you are on a Unix-based system).
+They will look like this:
+```bash
+55 23 30 4,6,9,11       bonusly makeitrain -r "john.doe, jane.doe, peter.parker" -m "You are the best #team"
+55 23 31 1,3,5,7,8,10,12 bonusly makeitrain -r "john.doe, jane.doe, peter.parker" -m "You are the best #team"
+55 23 28 2 bonusly makeitrain -r "john.doe, jane.doe, peter.parker" -m "You are the best #team"
+```
+What this will do is run `makeitrain` on the 30th of April, June, September, and November; on the 31st of January, March, May, July, August, October, and December; and on the 28th of February.
+
+We have to define three seperate cronjobs since crontabs don't support an easy way to specify the last day of the month.
