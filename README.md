@@ -9,7 +9,6 @@ It is written in Go using the [Cobra](https://github.com/spf13/cobra) library.
 ## Quick start guide
 
 1. Configure Bonusly CLI to use your API token. If you don't have a token yet, you can create one [here](https://bonus.ly/api).
-
 Then run `bonusly config --set-token <your API token>`. If no errors are returned you sucessfully added your token and are ready to go!
 
 2. Try a command. Call `bonusly allowance` to get your current remaining allowance for this month.
