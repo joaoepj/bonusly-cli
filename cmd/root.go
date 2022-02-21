@@ -16,11 +16,8 @@ var rootCmd = &cobra.Command{
 	Short: "CLI wrapper for Bonusly API written in Go",
 	Long: `CLI wrapper for Bonusly API written in go
     This terminal applicatin provides the ability to interact with parts of the Bonusly API.
-    See bonusly --help for all possible commands.
-    `,
-	// Uncomment the following line if your bare application
-	// has an action associated with it:
-	// Run: func(cmd *cobra.Command, args []string) { },
+    See bonusly --help for all possible commands.`,
+	Version: "0.2.0",
 }
 
 // Execute adds all child commands to the root command and sets flags appropriately.
