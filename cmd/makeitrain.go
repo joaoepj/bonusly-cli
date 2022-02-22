@@ -66,9 +66,7 @@ func checkMode(mode string) bool {
 var mode string
 
 func init() {
-	rootCmd.AddCommand(makeitrainCmd)
-	makeitrainCmd.Flags().StringSliceVarP(&tags, "hashtags", "g", nil, "Specify optional hashtags that go along with your message.")
-	makeitrainCmd.Flags().StringSliceVarP(&recipients, "recipients", "r", nil, "Specify one or more recipients for the bonus.")
+	awardCmd.AddCommand(makeitrainCmd)
 	makeitrainCmd.Flags().StringVarP(&mode, "mode", "m", "complete", "Choose the algorithm that will be used to distribute the remaining bonuslys")
 	makeitrainCmd.Flags().BoolVarP(&dryRun, "dry-run", "n", false, "If this flag is set, the command will not actually execute the transaction, but only show what it would do.")
 

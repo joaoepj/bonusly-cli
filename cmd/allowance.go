@@ -11,7 +11,6 @@ import (
 )
 
 var force bool
-var verbose bool
 
 // allowanceCmd represents the allowance command
 var allowanceCmd = &cobra.Command{

@@ -49,9 +49,9 @@ to quickly create a Cobra application.`,
 
 func init() {
 	rootCmd.AddCommand(awardCmd)
-	awardCmd.Flags().StringVarP(&message, "message", "m", "You're awesome!", "Your thank you/appreciation message that will be visible to everone.")
-	awardCmd.Flags().StringSliceVarP(&tags, "hashtags", "g", nil, "Specify optional hashtags that go along with your message.")
-	awardCmd.Flags().StringSliceVarP(&recipients, "recipients", "r", nil, "Specify one or more recipients for the bonus.")
+	awardCmd.PersistentFlags().StringVarP(&message, "message", "m", "You're awesome!", "Your thank you/appreciation message that will be visible to everone.")
+	awardCmd.PersistentFlags().StringSliceVarP(&tags, "hashtags", "g", nil, "Specify optional hashtags that go along with your message.")
+	awardCmd.PersistentFlags().StringSliceVarP(&recipients, "recipients", "r", nil, "Specify one or more recipients for the bonus.")
 	awardCmd.Flags().IntVarP(&amount, "amount", "a", 0, "How many bonuslys you want to award.")
 	awardCmd.Flags().BoolVarP(&confirm, "confirm", "c", false, "Asks again before sending request.")
 	awardCmd.Flags().BoolVarP(&interactive, "interactive", "i", false, "Enables interactive mode. This allows you to assemble your message, recipients, etc. step by step.")
