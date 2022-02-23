@@ -57,9 +57,15 @@ func init() {
 	awardCmd.MarkPersistentFlagRequired("recipients")
 	awardCmd.Flags().IntVarP(&amount, "amount", "a", 0, "How many bonuslys you want to award.")
 	awardCmd.MarkFlagRequired("amount")
+	awardCmd.RegisterFlagCompletionFunc("amount", amountCompletion)
 	awardCmd.Flags().BoolVarP(&confirm, "confirm", "c", false, "Asks again before sending request.")
 	awardCmd.Flags().BoolVarP(&interactive, "interactive", "i", false, "Enables interactive mode. This allows you to assemble your message, recipients, etc. step by step.")
 }
+
+func amountCompletion(cmd *cobra.Command, args []string, toComplete string) ([]string, cobra.ShellCompDirective) {
+	return []string{"1", "2", "5"}, cobra.ShellCompDirectiveDefault
+}
+
 func validateFlags(amount int, tags, recipients []string, message string) bool {
 	if len(recipients) == 0 {
 		fmt.Println("Need to specify at least one recipient! Use '--recipients' or '-r' flag.")
