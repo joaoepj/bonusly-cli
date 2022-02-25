@@ -102,7 +102,7 @@ func GetLocalUser(verbose bool) (User, error) {
 func GetUser(id string) (User, error) {
 	userData, err := makeRequest(http.MethodGet, BASE_URL+"/users/me", []byte(""))
 	if err != nil {
-		fmt.Printf("something went wrong during get request")
+		fmt.Printf("Something went wrong during get request")
 		return User{}, err
 	}
 	userApiResponse := userApiResponse{}
@@ -174,7 +174,7 @@ func CreateBonus(payload Bonus) (string, error) {
 func CheckApiTokenExists() bool {
 	_, err := readApiToken()
 	if err != nil {
-		fmt.Println("can't find API token. Did you forget to call `bonusly config --token`?")
+		fmt.Println("Can't find API token. Did you forget to call `bonusly config --token`?")
 		return false
 	}
 	return true

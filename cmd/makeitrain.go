@@ -10,14 +10,17 @@ import (
 	"github.com/spf13/cobra"
 )
 
-var dryRun bool
+var (
+	mode string
+    dryRun bool
+)
 
 // makeitrainCmd represents the makeitrain command
 var makeitrainCmd = &cobra.Command{
 	Use:   "makeitrain",
 	Short: "Award all your remaining bonusly.",
 	Long: `Use this command to split your remaining bonusly evenly between the specified recipients.
-    Has different modes that decide what happens when you can't split the amount of remaining bonuslys evenly.`,
+Has different modes that decide what happens when you can't split the amount of remaining bonuslys evenly.`,
 	Run: func(cmd *cobra.Command, args []string) {
 		balance := utils.FetchCurrentGivingBalance()
 		if balance < 1 {
@@ -63,11 +66,10 @@ func checkMode(mode string) bool {
 	return true
 }
 
-var mode string
+
 
 func init() {
 	awardCmd.AddCommand(makeitrainCmd)
 	makeitrainCmd.Flags().StringVarP(&mode, "mode", "m", "complete", "Choose the algorithm that will be used to distribute the remaining bonuslys")
 	makeitrainCmd.Flags().BoolVarP(&dryRun, "dry-run", "n", false, "If this flag is set, the command will not actually execute the transaction, but only show what it would do.")
-
 }

@@ -16,12 +16,8 @@ var force bool
 var allowanceCmd = &cobra.Command{
 	Use:   "allowance",
 	Short: "Get your current Bonuslys for spending and giving away",
-	Long: `A longer description that spans multiple lines and likely contains examples
-and usage of using your command. For example:
-
-Cobra is a CLI library for Go that empowers applications.
-This application is a tool to generate the needed files
-to quickly create a Cobra application.`,
+	Long: `This command displays your bonus.ly account balances informing the respective ammounts
+left to spend in rewards for yourself or bonus to coleagues within the current month.`,
 	Run: func(cmd *cobra.Command, args []string) {
 		exists := utils.CheckApiTokenExists()
 		if !exists {

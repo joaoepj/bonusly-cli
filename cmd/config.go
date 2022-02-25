@@ -20,15 +20,15 @@ var configCmd = &cobra.Command{
 	Long: `With this command you can configure your settings. Start off by running
 "bonusly config --token <your-api-token>" to be able to use the Bonusly CLI.
 
- If you don't have a Bonusly API token yet, go visit https://bonus.ly/api to create one.`,
-
+If you don't have a Bonusly API token yet, go visit https://bonus.ly/api to create one.`,
 	Run: func(cmd *cobra.Command, args []string) {
-		if len(args) == 0 {
+		if cmd.Flag("token").Name == "token" && cmd.Flag("token").Changed {
+			if apiToken = cmd.Flag("token").Value.String(); apiToken == "" {
+				fmt.Println("Api token can't be empty!")
+				return
+			}
+		} else {
 			fmt.Println("Please specify at least one flag! See \"bonusly config --help\" for more information.")
-			return
-		}
-		if len(apiToken) == 0 {
-			fmt.Println("Api token can't be empty!")
 			return
 		}
 		userData, err := utils.ReadUserDataFromDisk(verbose)
