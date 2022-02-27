@@ -22,7 +22,7 @@ var awardCmd = &cobra.Command{
 	Use:   "award",
 	Short: "Give away bonuses to your coworkers!",
 	Long: `This command allows the specification of awards to coworkers.
-You may specify the ammount to be given, the destination recipients 
+You may specify the amount to be given, the destination recipients 
 (who will receive) and the message and hashtags sent along.`,
 	Run: func(cmd *cobra.Command, args []string) {
 		total := len(recipients) * amount
