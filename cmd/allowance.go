@@ -16,7 +16,7 @@ var force bool
 var allowanceCmd = &cobra.Command{
 	Use:   "allowance",
 	Short: "Get your current Bonuslys for spending and giving away",
-	Long: `This command displays your bonus.ly account balances informing the respective ammounts
+	Long: `This command displays your Bonusly account balances informing the respective amounts
 left to spend in rewards for yourself or bonus to coleagues within the current month.`,
 	Run: func(cmd *cobra.Command, args []string) {
 		exists := utils.CheckApiTokenExists()
