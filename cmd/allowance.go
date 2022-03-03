@@ -29,7 +29,7 @@ left to spend in rewards for yourself or bonus to coleagues within the current m
 			return
 		}
 		isDataOlderThanOneDay := userData.Timestamp.Add(24 * time.Hour).Before(time.Now())
-		if isDataOlderThanOneDay || force == true {
+		if isDataOlderThanOneDay || force {
 			// fetch new data from server
 			if verbose {
 				fmt.Println("getting new data from server")

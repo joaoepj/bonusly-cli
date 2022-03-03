@@ -9,11 +9,11 @@ import (
 )
 
 var (
-	recipients []string
-	tags []string
-	message string
-	amount int
-	confirm bool
+	recipients  []string
+	tags        []string
+	message     string
+	amount      int
+	confirm     bool
 	interactive bool
 )
 
@@ -27,7 +27,7 @@ You may specify the ammount to be given, the destination recipients
 	Run: func(cmd *cobra.Command, args []string) {
 		total := len(recipients) * amount
 
-		if validateFlags(amount, tags, recipients, message) == false {
+		if validateFlags(amount, tags, recipients, message) {
 			return
 		}
 		// TODO: check if balance is enough

@@ -7,12 +7,13 @@ package cmd
 import (
 	"bonusly/utils"
 	"fmt"
+
 	"github.com/spf13/cobra"
 )
 
 var (
-	mode string
-    dryRun bool
+	mode   string
+	dryRun bool
 )
 
 // makeitrainCmd represents the makeitrain command
@@ -61,12 +62,10 @@ Has different modes that decide what happens when you can't split the amount of 
 	},
 }
 
-func checkMode(mode string) bool {
-	// modes := []string{"complete", "oneMessage"}
-	return true
-}
-
-
+//func checkMode(mode string) bool {
+// modes := []string{"complete", "oneMessage"}
+//	return true
+//}
 
 func init() {
 	awardCmd.AddCommand(makeitrainCmd)
