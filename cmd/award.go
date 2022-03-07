@@ -27,7 +27,7 @@ You may specify the amount to be given, the destination recipients
 	Run: func(cmd *cobra.Command, args []string) {
 		total := len(recipients) * amount
 
-		if validateFlags(amount, tags, recipients, message) {
+		if !validateFlags(amount, tags, recipients, message) {
 			return
 		}
 		// TODO: check if balance is enough
