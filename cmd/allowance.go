@@ -16,12 +16,8 @@ var force bool
 var allowanceCmd = &cobra.Command{
 	Use:   "allowance",
 	Short: "Get your current Bonuslys for spending and giving away",
-	Long: `A longer description that spans multiple lines and likely contains examples
-and usage of using your command. For example:
-
-Cobra is a CLI library for Go that empowers applications.
-This application is a tool to generate the needed files
-to quickly create a Cobra application.`,
+	Long: `This command displays your Bonusly account balances informing the respective amounts
+left to spend in rewards for yourself or bonus to coleagues within the current month.`,
 	Run: func(cmd *cobra.Command, args []string) {
 		exists := utils.CheckApiTokenExists()
 		if !exists {
@@ -33,7 +29,7 @@ to quickly create a Cobra application.`,
 			return
 		}
 		isDataOlderThanOneDay := userData.Timestamp.Add(24 * time.Hour).Before(time.Now())
-		if isDataOlderThanOneDay || force == true {
+		if isDataOlderThanOneDay || force {
 			// fetch new data from server
 			if verbose {
 				fmt.Println("getting new data from server")

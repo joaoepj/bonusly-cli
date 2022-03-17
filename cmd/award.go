@@ -8,27 +8,26 @@ import (
 	"github.com/spf13/cobra"
 )
 
-var recipients []string
-var tags []string
-var message string
-var amount int
-var confirm bool
-var interactive bool
+var (
+	recipients  []string
+	tags        []string
+	message     string
+	amount      int
+	confirm     bool
+	interactive bool
+)
 
 // awardCmd represents the award command
 var awardCmd = &cobra.Command{
 	Use:   "award",
 	Short: "Give away bonuses to your coworkers!",
-	Long: `A longer description that spans multiple lines and likely contains examples
-and usage of using your command. For example:
-
-Cobra is a CLI library for Go that empowers applications.
-This application is a tool to generate the needed files
-to quickly create a Cobra application.`,
+	Long: `This command allows the specification of awards to coworkers.
+You may specify the amount to be given, the destination recipients 
+(who will receive) and the message and hashtags sent along.`,
 	Run: func(cmd *cobra.Command, args []string) {
 		total := len(recipients) * amount
 
-		if validateFlags(amount, tags, recipients, message) == false {
+		if !validateFlags(amount, tags, recipients, message) {
 			return
 		}
 		// TODO: check if balance is enough
@@ -49,7 +48,8 @@ to quickly create a Cobra application.`,
 
 func init() {
 	rootCmd.AddCommand(awardCmd)
-	awardCmd.PersistentFlags().StringVarP(&message, "message", "m", "You're awesome!", "Your thank you/appreciation message that will be visible to everone.")
+	awardCmd.PersistentFlags().StringVarP(&message, "message", "m", "You're awesome!", `Your thank you/appreciation message that will be visible
+  to everone.`)
 	awardCmd.MarkPersistentFlagRequired("message")
 	awardCmd.PersistentFlags().StringSliceVarP(&tags, "hashtags", "g", nil, "Specify optional hashtags that go along with your message.")
 	awardCmd.MarkPersistentFlagRequired("hashtags")
@@ -58,7 +58,8 @@ func init() {
 	awardCmd.Flags().IntVarP(&amount, "amount", "a", 0, "How many bonuslys you want to award.")
 	awardCmd.MarkFlagRequired("amount")
 	awardCmd.Flags().BoolVarP(&confirm, "confirm", "c", false, "Asks again before sending request.")
-	awardCmd.Flags().BoolVarP(&interactive, "interactive", "i", false, "Enables interactive mode. This allows you to assemble your message, recipients, etc. step by step.")
+	awardCmd.Flags().BoolVarP(&interactive, "interactive", "i", false, `Enables interactive mode. This allows you to assemble
+  your message, recipients, etc. step by step.`)
 }
 func validateFlags(amount int, tags, recipients []string, message string) bool {
 	if len(recipients) == 0 {
